@@ -14,8 +14,9 @@
   :depends-on ()
   :components ((:module "src"
                 :components
-                ((:file "fors" :depends-on ("builtin-words" "data"))
-                 (:file "builtin-words" :depends-on ("data"))
+                ((:file "fors" :depends-on ("builtin-words" "exec" "data"))
+                 (:file "builtin-words" :depends-on ("exec" "data"))
+                 (:file "exec" :depends-on ("data"))
                  (:file "data"))))
   :description ""
   :long-description

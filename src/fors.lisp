@@ -1,7 +1,8 @@
 (defpackage fors
   (:use :cl
         :fors.data
-        :fors.builtin-words)
+        :fors.builtin-words
+        :fors.exec)
   (:export #:with-fors
            #:dump
            #:run
@@ -60,6 +61,7 @@
                  (setf (aref *text* open-paren-pointer)
                        (1- (length *text*)))))
               ((symbolp x)
+               (setf x (intern (symbol-name x) :fors.builtin-words))
                (vector-push (if (gethash x *symbol-table*)
                                 (gethash x *symbol-table*)
                                 (setf (gethash x *symbol-table*)
@@ -77,9 +79,6 @@
              *symbol-table*)
     symbols))
 
-(defun nump (x)
-  (< x *word-offset*))
-
 (defun dump (memory)
   (let ((symbols (symbol-table-symbols)))
     (loop
@@ -88,38 +87,9 @@
                   x
                   (aref symbols (- x *word-offset*))))))
 
-(defun exec (start end)
-  ;(declare (optimize (speed 3) (space 0) (safety 0) (debug 0)))
-  (loop
-    for *pointer* from start below end
-    for x = (aref *text* *pointer*)
-    if (nump x)
-    do (vector-push x *stack*)
-    else
-    do (let* ((index (- x *word-offset*))
-              (start (aref *dictionary-start* index)))
-         (if (zerop start)
-             (funcall (aref *builtin-word-functions* index))
-             (exec start (aref *dictionary-end* index))))))
-
 (defun run (source)
   (let ((start (length *text*)))
     (write-code source)
     (print (dump *text*))
     (exec start (length *text*))
     (print (dump *stack*))))
-
-
-'
-(with-fors ()
-  (run '($ fib
-           dup 0 swap <= if
-             drop 0
-           else
-             dup 1 = if
-               drop 1
-             else
-               dup 1 swap - fib swap 2 swap - fib +
-             then
-           then
-         $)))

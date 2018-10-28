@@ -1,12 +1,10 @@
 (defpackage fors.builtin-words
   (:use :cl
-        :fors.data)
+        :fors.data
+        :fors.exec)
   (:export #:*builtin-words*
            #:*builtin-word-functions*))
 (in-package :fors.builtin-words)
-
-(defvar *builtin-words* '())
-(defvar *builtin-word-functions* (make-array 128 :element-type 'function :fill-pointer 0))
 
 (defmacro defword (symbol &body body)
   `(progn
@@ -22,7 +20,8 @@
          (vector-push (+ *pointer* 2) *stack*)
          (setf *pointer* (aref *text* (1+ *pointer*)))))
 
-(eval `(defword ,+close-paren+ nil))
+(eval `(defword ,+close-paren+
+         (setf *pointer* *text-size*)))
 
 
 (defword swap
@@ -56,10 +55,18 @@
   'TODO)
 
 (defword if
-  'TODO)
+  (let ((pointer (vector-pop *stack*))
+        (cond (vector-pop *stack*)))
+    (when (/= cond 0)
+      (exec pointer (1- *pointer*)))))
 
 (defword if-else
-  'TODO)
+  (let ((pointer-else (vector-pop *stack*))
+        (pointer-then (vector-pop *stack*))
+        (cond (vector-pop *stack*)))
+    (if (= cond 0)
+      (exec pointer-else (1- *pointer*))
+      (exec pointer-then (1- *pointer*)))))
 
 
 (defword p
@@ -87,4 +94,8 @@
 
 (defword <
   (vector-push (if (< (vector-pop *stack*) (vector-pop *stack*)) 1 0)
+               *stack*))
+
+(defword <=
+  (vector-push (if (<= (vector-pop *stack*) (vector-pop *stack*)) 1 0)
                *stack*))

@@ -11,6 +11,8 @@
            #:*text*
            #:*pointer*
            #:*stack*
+           #:*builtin-words*
+           #:*builtin-word-functions*
            #:*dictionary-start*
            #:*dictionary-end*))
 (in-package :fors.data)
@@ -27,6 +29,9 @@
 (defvar *text* nil)
 (defvar *pointer* nil)
 (defvar *stack* nil)
+
+(defvar *builtin-words* '())
+(defvar *builtin-word-functions* (make-array 128 :element-type 'function :fill-pointer 0))
 
 (defvar *dictionary-start* nil)
 (defvar *dictionary-end* nil)
