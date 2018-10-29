@@ -90,6 +90,10 @@
   (vector-push (- (vector-pop *stack*) (vector-pop *stack*))
                *stack*))
 
+(defword *
+  (vector-push (* (vector-pop *stack*) (vector-pop *stack*))
+               *stack*))
+
 (defword =
   (vector-push (if (= (vector-pop *stack*) (vector-pop *stack*)) 1 0)
                *stack*))
