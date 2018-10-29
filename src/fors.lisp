@@ -7,9 +7,7 @@
            #:dump
            #:run
            #:*stack*
-           #:*text*
-           #:+open-paren+
-           #:+close-paren+))
+           #:*text*))
 (in-package :fors)
 
 (defmacro with-fors ((&key (text-size *text-size*)
@@ -49,19 +47,19 @@
             (cond
               ((typep x *word-type*)
                (vector-push x *text*))
-              ((eq x +open-paren+)
-               (vector-push (gethash x *symbol-table*)
+              ((string= x +open-paren+)
+               (vector-push (gethash +open-paren+ *symbol-table*)
                             *text*)
                (push (length *text*) open-paren-pointers)
                (vector-push 0 *text*))
-              ((eq x +close-paren+)
-               (vector-push (gethash x *symbol-table*)
+              ((string= x +close-paren+)
+               (vector-push (gethash +close-paren+ *symbol-table*)
                             *text*)
                (let ((open-paren-pointer (pop open-paren-pointers)))
                  (setf (aref *text* open-paren-pointer)
                        (1- (length *text*)))))
               ((symbolp x)
-               (setf x (intern (symbol-name x) :fors.builtin-words))
+               (setf x (intern (symbol-name x) :fors.data))
                (vector-push (if (gethash x *symbol-table*)
                                 (gethash x *symbol-table*)
                                 (setf (gethash x *symbol-table*)

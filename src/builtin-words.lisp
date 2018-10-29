@@ -8,7 +8,9 @@
 
 (defmacro defword (symbol &body body)
   `(progn
-     (setf *builtin-words* (nconc *builtin-words* (list ',symbol)))
+     (setf *builtin-words*
+           (nconc *builtin-words*
+                  (list ',(intern (symbol-name symbol) :fors.data))))
      (vector-push
       (lambda ()
         ,@body
@@ -16,12 +18,12 @@
       *builtin-word-functions*)))
 
 
-(eval `(defword ,+open-paren+
-         (vector-push (+ *pointer* 2) *stack*)
-         (setf *pointer* (aref *text* (1+ *pointer*)))))
+(defword [
+  (vector-push (+ *pointer* 2) *stack*)
+  (setf *pointer* (aref *text* (1+ *pointer*))))
 
-(eval `(defword ,+close-paren+
-         (setf *pointer* *text-size*)))
+(defword ]
+  (setf *pointer* *text-size*))
 
 
 (defword swap
