@@ -20,8 +20,8 @@
 (defconstant +open-paren+ '[)
 (defconstant +close-paren+ '])
 
-(defvar *word-type* '(signed-byte 64))
-(defvar *word-offset* (expt 2 (- 64 2)))
+(defvar *word-type* '(signed-byte 32))
+(defvar *word-offset* (expt 2 (- 32 2)))
 (defvar *text-size* (expt 2 10))
 (defvar *stack-size* (expt 2 10))
 (defvar *dictionary-size* (expt 2 5))

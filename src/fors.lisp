@@ -88,6 +88,4 @@
 (defun run (source)
   (let ((start (length *text*)))
     (write-code source)
-    (print (dump *text*))
-    (exec start (length *text*))
-    (print (dump *stack*))))
+    (exec start (length *text*))))

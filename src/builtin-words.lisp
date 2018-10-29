@@ -13,6 +13,10 @@
                   (list ',(intern (symbol-name symbol) :fors.data))))
      (vector-push
       (lambda ()
+        (declare (optimize (spped 3) (space 0) (safety 2) (debug 0))
+                 (type (vector (signed-byte 32) *) *text* *stack*)
+                 (type fixnum *pointer*))
+        ;(format t "~a~%" ',symbol)
         ,@body
         nil)
       *builtin-word-functions*)))
@@ -49,7 +53,7 @@
   (let* ((pointer (vector-pop *stack*))
          (word (aref *text* pointer))
          (index (- word *word-offset*)))
-    (print (list pointer word index))
+    ;(print (list pointer word index))
     (setf (aref *dictionary-start* index) (1+ pointer)
           (aref *dictionary-end* index) (1- *pointer*))))
 
